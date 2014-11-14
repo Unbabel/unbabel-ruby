@@ -12,6 +12,6 @@ Gem::Specification.new do |s|
   s.license       = 'LGPL'
 # Specify your gem's dependencies in reverse_markdown.gemspec
 
- s.add_runtime_dependency 'faraday', '0.0.9'
- s.add_runtime_dependency 'json', '1.8.1'
+ s.add_runtime_dependency 'faraday'
+ s.add_runtime_dependency 'json'
 end
