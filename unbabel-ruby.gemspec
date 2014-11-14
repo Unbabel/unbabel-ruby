@@ -7,11 +7,9 @@ Gem::Specification.new do |s|
   s.authors     = ["Sam Hopkins", "Diogo Rosa"]
   s.email       = 'sam@unbabel.com'
   s.files       = ["lib/unbabel.rb"]
-  s.homepage    =
-    'http://unbabel.com'
-  s.license       = 'LGPL'
-# Specify your gem's dependencies in reverse_markdown.gemspec
-
- s.add_runtime_dependency 'faraday'
- s.add_runtime_dependency 'json'
+  s.require_paths = ["lib"]
+  s.homepage    = 'http://unbabel.com'
+  s.license      = 'LGPL'
+  s.add_runtime_dependency 'faraday'
+  s.add_runtime_dependency 'json'
 end
