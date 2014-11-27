@@ -13,11 +13,9 @@ class Unbabel
   def initialize(username, apikey, sandbox=false)
     @username = username
     @apikey = apikey
-    unbabel_endpoint_domain = @@UNBABEL_SANDBOX_DOMAIN
-    if sandbox
-      unbabel_endpoint_domain = @@UNBABEL_DOMAIN
-    end
+    unbabel_endpoint_domain = sandbox ? @@UNBABEL_SANDBOX_DOMAIN : @@UNBABEL_DOMAIN
     unbabel_endpoint_domain = ENV['UNBABEL_URL'] if ENV['UNBABEL_URL']
+
     @conn = Faraday.new(:url => unbabel_endpoint_domain) do |faraday|
       faraday.request  :url_encoded
       faraday.response :logger  
