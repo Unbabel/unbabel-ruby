@@ -18,7 +18,7 @@ class Unbabel
 
     @conn = Faraday.new(:url => unbabel_endpoint_domain) do |faraday|
       faraday.request  :url_encoded
-      faraday.response :logger  
+      faraday.response :logger
       faraday.adapter  Faraday.default_adapter
     end
   end
@@ -46,13 +46,13 @@ class Unbabel
     response
   end
 
-  def post_translations(text, target_language, source_language: nil, type: nil, tone: nil, 
+  def post_translations(text, target_language, source_language: nil, type: nil, tone: nil,
                         visibility: nil, public_url: nil, callback_url: nil, topics: [],
                         instructions: nil, uid: nil, text_format: "text", target_text: nil,
                         origin: nil)
     data = {
-      text: text, 
-      target_language: target_language, 
+      text: text,
+      target_language: target_language,
       source_language: source_language,
       type: type,
       tone: tone,
@@ -68,5 +68,9 @@ class Unbabel
     }
     return api_call('translation/', data: data, method: 'post')
   end
-  
+
+  def query_translation(uid)
+    return api_call("translation/#{uid}/",  method: 'get')
+  end
+
 end
