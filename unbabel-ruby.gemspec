@@ -12,4 +12,5 @@ Gem::Specification.new do |s|
   s.license      = 'LGPL'
   s.add_runtime_dependency 'faraday'
   s.add_runtime_dependency 'json'
+  s.add_development_dependency 'pry'
 end

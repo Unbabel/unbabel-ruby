@@ -39,7 +39,6 @@ class Unbabel
         req.params[k] = v
       end
       unless method == 'get'
-        puts data.to_json
         req.body = data.to_json
       end
     end
