@@ -1,4 +1,3 @@
-#require "rubygems"
 require "net/http"
 require "uri"
 require "faraday"
@@ -6,9 +5,21 @@ require "json"
 
 class Unbabel
 
+  @@translation_properties = [
+    :text, :target_language, :source_language, :type, :tone, :visibility,
+    :public_url, :callback_url, :topics, :instructions, :uid, :text_format,
+    :target_text, :origin, :client
+  ]
   @@UNBABEL_SANDBOX_DOMAIN = 'http://sandbox.unbabel.com/tapi/v2/'
   @@UNBABEL_DOMAIN = 'https://unbabel.com/tapi/v2/'
 
+  class Translation < Struct.new(*@@translation_properties)
+
+    def self.from_hash(hash)
+      new(*hash.values_at(*members))
+    end
+
+  end
 
   def initialize(username, apikey, sandbox=false)
     @username = username
@@ -30,6 +41,8 @@ class Unbabel
       func = @conn.method(:get)
     elsif method == 'post'
       func = @conn.method(:post)
+    elsif method == 'patch'
+      func = @conn.method(:patch)
     end
     response = func.call do |req|
       req.url endpoint
@@ -39,34 +52,28 @@ class Unbabel
         req.params[k] = v
       end
       unless method == 'get'
-        puts data.to_json
         req.body = data.to_json
       end
     end
     response
   end
 
-  def post_translations(text, target_language, source_language: nil, type: nil, tone: nil,
-                        visibility: nil, public_url: nil, callback_url: nil, topics: [],
-                        instructions: nil, uid: nil, text_format: "text", target_text: nil,
-                        origin: nil)
-    data = {
-      text: text,
-      target_language: target_language,
-      source_language: source_language,
-      type: type,
-      tone: tone,
-      visibility: visibility,
-      public_url: public_url,
-      callback_url: callback_url,
-      topics: topics,
-      instructions: instructions,
-      uid: uid,
-      text_format: text_format,
-      target_text: target_text,
-      origin: origin
-    }
+  def post_translations(*params)
+    attributes = (params[2] || {}).clone
+    translation = unless params.first.is_a? Translation
+                    attributes[:text] = params[0]
+                    attributes[:target_language] = params[1]
+                    Translation.from_hash(attributes)
+                  else
+                    params.first
+                  end
+    data = translation.to_h
     return api_call('translation/', data: data, method: 'post')
+  end
+
+  def bulk_translations(*translations)
+    data = { objects: translations.map(&:to_h) }
+    return api_call('translation/', data: data, method: 'patch')
   end
 
   def query_translation(uid)
