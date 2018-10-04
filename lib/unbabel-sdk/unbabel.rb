@@ -1,4 +1,3 @@
-#require "rubygems"
 require "net/http"
 require "uri"
 require "faraday"
@@ -72,5 +71,4 @@ class Unbabel
   def query_translation(uid)
     return api_call("translation/#{uid}/",  method: 'get')
   end
-
 end

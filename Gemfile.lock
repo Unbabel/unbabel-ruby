@@ -1,0 +1,23 @@
+PATH
+  remote: .
+  specs:
+    unbabel-ruby (0.0.1)
+      faraday (~> 0.15)
+      json (= 2.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    faraday (0.15.3)
+      multipart-post (>= 1.2, < 3)
+    json (2.1.0)
+    multipart-post (2.0.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  unbabel-ruby!
+
+BUNDLED WITH
+   1.16.5
