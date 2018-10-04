@@ -17,5 +17,5 @@ username = ENV['UNBABEL_TEST_USER']
 apikey = ENV['UNBABEL_API_KEY']
 
 api = Unbabel.new(username, apikey)
-api.post_translations('This is a test translation', 'pt', source_language: 'en')
+api.post_translations('This is a test translation', target_language: 'pt', source_language: 'en')
 ```

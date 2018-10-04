@@ -4,48 +4,29 @@ require "faraday"
 require "json"
 
 class Unbabel
+  UNBABEL_SANDBOX_DOMAIN = 'https://sandbox.unbabel.com/tapi/v2/'
+  UNBABEL_DOMAIN = 'https://unbabel.com/tapi/v2/'
 
-  @@UNBABEL_SANDBOX_DOMAIN = 'http://sandbox.unbabel.com/tapi/v2/'
-  @@UNBABEL_DOMAIN = 'https://unbabel.com/tapi/v2/'
-
+  private_constant :UNBABEL_SANDBOX_DOMAIN, :UNBABEL_DOMAIN
 
   def initialize(username, apikey, sandbox=false)
     @username = username
     @apikey = apikey
-    unbabel_endpoint_domain = sandbox ? @@UNBABEL_SANDBOX_DOMAIN : @@UNBABEL_DOMAIN
-    unbabel_endpoint_domain = ENV['UNBABEL_URL'] if ENV['UNBABEL_URL']
+    @conn = connection(sandbox)
+  end
 
-    @conn = Faraday.new(:url => unbabel_endpoint_domain) do |faraday|
-      faraday.request  :url_encoded
-      faraday.response :logger
-      faraday.adapter  Faraday.default_adapter
+  def api_call(endpoint, params: {}, data: {}, method: 'get')  
+    function(method).call do |resp|
+      resp.url(endpoint)
+      resp.headers['Authorization'] = "ApiKey #{@username}:#{@apikey}"
+      resp.headers['Content-Type'] = "application/json"
+
+      params.each { |key, value| resp.params[key] = value }
+      resp.body = data.to_json unless method == 'get'
     end
   end
 
-  def api_call(endpoint, params: nil, data: nil, method: 'get')
-    params ||= {}
-    data ||= {}
-    if method == 'get'
-      func = @conn.method(:get)
-    elsif method == 'post'
-      func = @conn.method(:post)
-    end
-    response = func.call do |req|
-      req.url endpoint
-      req.headers['Authorization'] = "ApiKey #{@username}:#{@apikey}"
-      req.headers['Content-Type'] = "application/json"
-      params.each do |k, v|
-        req.params[k] = v
-      end
-      unless method == 'get'
-        puts data.to_json
-        req.body = data.to_json
-      end
-    end
-    response
-  end
-
-  def post_translations(text, target_language, source_language: nil, type: nil, tone: nil,
+  def post_translations(text, target_language:, source_language:, type: nil, tone: nil,
                         visibility: nil, public_url: nil, callback_url: nil, topics: [],
                         instructions: nil, uid: nil, text_format: "text", target_text: nil,
                         origin: nil)
@@ -65,10 +46,30 @@ class Unbabel
       target_text: target_text,
       origin: origin
     }
-    return api_call('translation/', data: data, method: 'post')
+    
+    api_call('translation/', data: data, method: 'post')
   end
 
   def query_translation(uid)
-    return api_call("translation/#{uid}/",  method: 'get')
+    api_call("translation/#{uid}/",  method: 'get')
+  end
+
+  private
+
+  def function(method)
+    return @conn.method(:get) if method == 'get'
+    return @conn.method(:post) if method == 'post'
+
+    raise RuntimeError, "Method: #{method} not allowed"
+  end
+  
+  def connection(sandbox)
+    unbabel_endpoint_domain = sandbox ? UNBABEL_SANDBOX_DOMAIN : UNBABEL_DOMAIN
+
+    Faraday.new(:url => unbabel_endpoint_domain) do |faraday|
+      faraday.request  :url_encoded
+      faraday.response :logger
+      faraday.adapter  Faraday.default_adapter
+    end
   end
 end

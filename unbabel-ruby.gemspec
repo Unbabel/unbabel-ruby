@@ -24,4 +24,8 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "faraday", "~> 0.15"
   spec.add_runtime_dependency "json", "2.1"
+
+  spec.add_development_dependency "pry", "~> 0.11"
+  spec.add_development_dependency "webmock", "~> 3.4"
+  spec.add_development_dependency "rspec", "~> 3.8"
 end
