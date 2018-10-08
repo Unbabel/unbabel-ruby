@@ -1,0 +1,18 @@
+---
+AllCops:
+  TargetRubyVersion: 2.3
+
+Style/Documentation:
+  Enabled: False
+
+Naming/FileName:
+  Exclude:
+    - lib/unbabel-sdk.rb
+
+Metrics/LineLength:
+  Exclude:
+    - unbabel-ruby.gemspec
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/unbabel-sdk/unbabel_spec.rb

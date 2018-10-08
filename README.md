@@ -11,7 +11,7 @@ Please visit our documentation page at https://developers.unbabel.com/
 
 ## Getting started:
 ```
-require 'unbabel-sdk'
+require 'unbabel_sdk'
 
 username = ENV['UNBABEL_TEST_USER']
 apikey = ENV['UNBABEL_API_KEY']
